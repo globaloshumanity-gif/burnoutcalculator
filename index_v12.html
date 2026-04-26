@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DevPuls Risk Calculator</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;600;700&display=swap');
+:root{--bg:#110C17;--panel:#241631;--panel2:#4b3b57;--border:#6a5976;--text:#DAD1E6;--muted:#DAD1E6;--pink:#FF726D;--pink2:#FF4DA9;--purple:#CD42D7;--link:#F94CAF;--green:#16d7a5;--yellow:#776100;--yellowText:#fff2a3}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;padding:32px 18px 40px}
+.wrap{max-width:1180px;margin:0 auto}
+.back{display:inline-block;color:var(--link);text-decoration:none;font-weight:800;margin-bottom:14px;font-family:'Inter',sans-serif}
+.eyebrow{color:var(--pink);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:8px 0;font-weight:500}
+h1{margin:0 0 14px;color:var(--pink);font-size:44px;line-height:1.05;font-weight:800;font-family:'Inter',sans-serif;letter-spacing:-0.02em}
+.intro{margin:0 0 26px;color:var(--text);font-size:18px;max-width:980px;line-height:1.35}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.card{border:1px solid var(--border);background:var(--panel);min-height:270px}
+.cardTop{height:34px;background:var(--panel2);display:flex;align-items:center;justify-content:center;color:#efe8f4;font-size:18px;font-weight:700;font-family:'IBM Plex Mono',monospace}
+.cardBody{padding:18px 16px 20px}
+.card h3{margin:0 0 8px;font-size:18px;font-weight:800;font-family:'Inter',sans-serif}
+.card p{margin:0 0 14px;color:var(--text);font-size:15px;line-height:1.45;max-width:240px;font-family:'Inter',sans-serif;font-weight:500}
+select{width:100%;padding:14px 14px;border:1px solid #72617d;border-radius:6px;background:linear-gradient(180deg,#3a2946,#32233f);color:#f1e9f4;font-size:16px;font-family:'Inter',sans-serif;appearance:none;-webkit-appearance:none;-moz-appearance:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}
+select:focus{outline:none;border-color:#ff5c97;box-shadow:0 0 0 3px rgba(255,92,151,.15)}
+select option{background:#3a2946;color:#f1e9f4} select option[value='']{color:#a99ab1}
+.btnRow{display:flex;justify-content:center;margin:18px 0 76px}
+.btn{border:none;border-radius:4px;padding:14px 22px;font-size:16px;font-weight:800;cursor:pointer;line-height:1;font-family:'Inter',sans-serif}
+.primary{background:linear-gradient(90deg,#FF6680 5%, #FF4DA9 45%, #CD42D7 85%);color:#1f0f28;min-width:430px}
+.secondary{background:#4b3a59;color:#fff}
+.ghost{background:#3b2948;color:#fff;border:1px solid #6a5976}
+.resultsLabel{color:var(--pink);font-size:12px;text-transform:uppercase;margin:0 0 12px}
+.resultsTitle{text-align:center;margin:0;font-size:28px;font-weight:700;letter-spacing:.02em;background:linear-gradient(90deg,#FF6680 5%, #FF4DA9 45%, #CD42D7 85%);-webkit-background-clip:text;background-clip:text;color:transparent;font-family:'IBM Plex Mono',monospace}
+.total{text-align:center;margin:24px 0 6px;font-size:84px;font-weight:700;color:var(--pink);font-family:'IBM Plex Mono',monospace;letter-spacing:-.03em}
+.subnote{text-align:center;margin:0 0 40px;color:var(--muted);font-style:italic;font-size:16px}
+.resultGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;text-align:center}
+.val{font-family:'IBM Plex Mono',monospace;font-size:54px;font-weight:700;margin-bottom:6px}
+.box h4{margin:0 0 8px;font-size:19px;font-weight:700;font-family:'Inter',sans-serif}
+.box p{margin:0 auto;max-width:300px;color:var(--muted);font-size:15px;line-height:1.45;font-family:'Inter',sans-serif}
+.warn{margin-top:28px;background:var(--yellow);color:var(--yellowText);padding:16px 18px;border-radius:3px;font-size:15px;font-weight:700;line-height:1.45}
+.controls{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:26px}
+.controls .btn{min-width:160px}
+.footerBack{margin-top:18px;text-align:center}
+.footerBack a{color:var(--link);text-decoration:none;font-weight:800;font-family:'Inter',sans-serif}
+@media (max-width:980px){.grid,.resultGrid{grid-template-columns:1fr}.primary{min-width:0;width:100%}.controls .btn{min-width:0;flex:1 1 160px}h1{font-size:38px}.total{font-size:58px}}
+@media print{@page{size:landscape;margin:10mm}body{padding:0;background:#fff;color:#000}.back,.btnRow,.controls,.footerBack{display:none!important}#results{page-break-inside:avoid;transform:scale(.86);transform-origin:top center}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="https://copy-of-tech-burnout-is--pvi58cm.gamma.site/">← Close calculator</a>
+<div class="eyebrow">Your team at a glance</div>
+<h1>The Risk Calculator</h1>
+<p class="intro">Use the four questions below to scope your team's exposure. The methodology is grounded in published European labour and tech sector data.</p>
+<div class="grid">
+<div class="card"><div class="cardTop">1</div><div class="cardBody"><h3>Team Size</h3><p>How many developers are on your team?</p><select id="q1"><option value="" selected disabled>Select</option><option value="5">5</option><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100+</option></select></div></div>
+<div class="card"><div class="cardTop">2</div><div class="cardBody"><h3>Average Annual Salary</h3><p>What is the average developer salary?</p><select id="q2"><option value="" selected disabled>Select</option><option value="60000">€60k</option><option value="80000">€80k</option><option value="100000">€100k</option><option value="120000">€120k+</option></select></div></div>
+<div class="card"><div class="cardTop">3</div><div class="cardBody"><h3>Signal Frequency</h3><p>How often do you notice: missed deadlines, devs going quiet, increased bugs, unexpected sick leave?</p><select id="q3"><option value="" selected disabled>Select</option><option value="0.05">Rarely</option><option value="0.10">Sometimes</option><option value="0.18">Often</option><option value="0.25">Very Often</option></select></div></div>
+<div class="card"><div class="cardTop">4</div><div class="cardBody"><h3>Turnover (Last 12 Mo.)</h3><p>Has your team had any departures?</p><select id="q4"><option value="" selected disabled>Select</option><option value="0">None</option><option value="1">1-2</option><option value="3">3-5</option><option value="5">More than 5</option></select></div></div>
+</div>
+<div class="btnRow"><button class="btn primary" onclick="calc()">Calculate how much my team's hidden risks are costing me</button></div>
+<div id="results" style="display:none">
+<div class="resultsLabel">Results</div>
+<h2 class="resultsTitle">Your Team's Estimated Hidden Burnout Cost:</h2>
+<div class="total" id="total">€___,___</div>
+<div class="subnote">per year — conservative estimate based on ETUI, ISACA, and Gallup benchmarks</div>
+<div class="resultGrid">
+<div class="box"><div class="val" style="color:var(--green)" id="v1">€___</div><h4 style="color:var(--green)">💸 Productivity Loss</h4><p>Estimated annual output erosion from disengagement and presenteeism</p></div>
+<div class="box"><div class="val" style="color:var(--pink)" id="v2">€___</div><h4 style="color:var(--pink)">🔄 Turnover Risk Cost</h4><p>Projected replacement cost at 150–200% of annual salary per departure</p></div>
+<div class="box"><div class="val" style="color:#ddd" id="v3">HIGH</div><h4 style="color:var(--purple)">📉 Tech Debt Risk</h4><p>Estimated technical debt accumulation from degraded code quality</p></div>
+</div>
+<div class="warn">This is a conservative floor. The real cost — including presenteeism and hidden disengagement — is likely 3 to 5x higher than what any standard reporting captures.</div>
+<div class="controls"><button class="btn secondary" onclick="copyResults()">Copy Results</button><button class="btn secondary" onclick="window.print()">Save as PDF</button><button class="btn secondary" onclick="shareResults()">Share</button><button class="btn ghost" onclick="clearCalc()">Clear / Restart</button></div>
+<div class="footerBack"><a href="https://copy-of-tech-burnout-is--pvi58cm.gamma.site/">← Close calculator</a></div>
+</div></div>
+<script>
+function euro(n){return '€'+Math.round(n).toLocaleString('en-US')}
+function allFilled(){return ['q1','q2','q3','q4'].every(id=>document.getElementById(id).value!=='')}
+function calc(){if(!allFilled()){alert('Please choose all 4 entries first.');return}const q1=+document.getElementById('q1').value,q2=+document.getElementById('q2').value,q3=+document.getElementById('q3').value,q4=+document.getElementById('q4').value;const v1=q1*q2*q3;const v2=q4*q2*1.75;const total=v1+v2;document.getElementById('v1').textContent=euro(v1);document.getElementById('v2').textContent=euro(v2);document.getElementById('total').textContent=euro(total);document.getElementById('v3').textContent=(q3>=0.18||q4>=3)?'HIGH':(q3>=0.10||q4>=1)?'MEDIUM':'LOW';document.getElementById('results').style.display='block';document.getElementById('results').scrollIntoView({behavior:'smooth'});}
+function clearCalc(){['q1','q2','q3','q4'].forEach(id=>document.getElementById(id).value='');document.getElementById('results').style.display='none';window.scrollTo({top:0,behavior:'smooth'});}
+function copyResults(){const txt=`Hidden Burnout Cost: ${document.getElementById('total').textContent} | Productivity Loss: ${document.getElementById('v1').textContent} | Turnover Risk: ${document.getElementById('v2').textContent}`;navigator.clipboard.writeText(txt).then(()=>alert('Results copied to clipboard!'));}
+function shareResults(){const txt=`My team's estimated hidden burnout cost is ${document.getElementById('total').textContent}.`;if(navigator.share){navigator.share({title:'Burnout Risk',text:txt,url:location.href}).catch(()=>{});}else{alert('Share via email / WhatsApp using copied results.');}}
+</script>
+</body>
+</html>

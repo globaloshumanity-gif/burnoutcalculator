@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Burnout Risk Calculator</title>
+  <style>
+    :root {
+      --bg: #24142f;
+      --panel: #2d1b3a;
+      --panel-top: #4b3a59;
+      --border: #665472;
+      --text: #f2eaf7;
+      --muted: #c6b8d1;
+      --pink: #ff4d94;
+      --pink2: #c459ff;
+      --green: #00d39a;
+      --yellow: #b18d00;
+      --cyan: #6fe5ff;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 32px 20px 48px;
+    }
+
+    .eyebrow {
+      color: #ff6aa9;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-size: 48px;
+      margin: 0 0 16px;
+      color: #ff6aa9;
+    }
+
+    .intro {
+      color: var(--muted);
+      max-width: 920px;
+      margin-bottom: 28px;
+      font-size: 18px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      min-height: 270px;
+    }
+
+    .card-top {
+      background: var(--panel-top);
+      text-align: center;
+      font-size: 36px;
+      font-weight: bold;
+      padding: 10px;
+    }
+
+    .card-body {
+      padding: 18px 16px 22px;
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 22px;
+    }
+
+    .card p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      background: #3b2949;
+      color: white;
+      font-size: 16px;
+      border-radius: 6px;
+    }
+
+    .button-row {
+      text-align: center;
+      margin: 18px 0 80px;
+    }
+
+    button {
+      background: linear-gradient(90deg, var(--pink), #d75cff);
+      border: none;
+      color: #1e0f28;
+      padding: 16px 24px;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    button:hover {
+      filter: brightness(1.08);
+    }
+
+    .results-label {
+      color: #ff6aa9;
+      font-size: 12px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .results {
+      margin-top: 40px;
+    }
+
+    .results h2 {
+      text-align: center;
+      font-size: 54px;
+      margin-bottom: 24px;
+      background: linear-gradient(90deg, #ff7d7d, #c95cff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .big-number {
+      text-align: center;
+      font-size: 92px;
+      font-weight: bold;
+      color: var(--pink);
+      margin: 0;
+    }
+
+    .subnote {
+      text-align: center;
+      color: var(--muted);
+      margin-top: 12px;
+      margin-bottom: 42px;
+      font-style: italic;
+      font-size: 16px;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      text-align: center;
+    }
+
+    .result-box .value {
+      font-size: 60px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .result-box h4 {
+      margin: 0 0 8px;
+      font-size: 22px;
+    }
+
+    .result-box p {
+      color: var(--muted);
+      margin: 0 auto;
+      max-width: 280px;
+    }
+
+    .green { color: var(--green); }
+    .pink { color: var(--pink); }
+    .purple { color: #8c6dff; }
+
+    .warning {
+      margin-top: 28px;
+      background: #6b5a00;
+      color: #fff3af;
+      padding: 18px 20px;
+      font-weight: bold;
+      border-radius: 4px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 900px) {
+      .grid, .result-grid {
+        grid-template-columns: 1fr;
+      }
+
+      h1 { font-size: 36px; }
+      .results h2 { font-size: 36px; }
+      .big-number { font-size: 58px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="eyebrow">Your team at a glance</div>
+    <h1>The Risk Calculator</h1>
+    <p class="intro">
+      Use the four questions below to scope your team's exposure.
+      The methodology is grounded in published European labour and tech sector data.
+    </p>
+
+    <div class="grid">
+      <div class="card">
+        <div class="card-top">1</div>
+        <div class="card-body">
+          <h3>Team Size</h3>
+          <p>How many developers are on your team?</p>
+          <select id="teamSize">
+            <option value="">Choose one</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100+</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-top">2</div>
+        <div class="card-body">
+          <h3>Average Annual Salary</h3>
+          <p>What is the average developer salary?</p>
+          <select id="salary">
+            <option value="">Choose one</option>
+            <option value="60000">€60k</option>
+            <option value="80000">€80k</option>
+            <option value="100000">€100k</option>
+            <option value="120000">€120k+</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-top">3</div>
+        <div class="card-body">
+          <h3>Signal Frequency</h3>
+          <p>How often do you notice missed deadlines, silence, bugs, or sick leave?</p>
+          <select id="signals">
+            <option value="">Choose one</option>
+            <option value="0.05">Rarely</option>
+            <option value="0.10">Sometimes</option>
+            <option value="0.18">Often</option>
+            <option value="0.25">Very Often</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-top">4</div>
+        <div class="card-body">
+          <h3>Turnover (Last 12 Mo.)</h3>
+          <p>Has your team had any departures?</p>
+          <select id="turnover">
+            <option value="">Choose one</option>
+            <option value="0">None</option>
+            <option value="1">1–2</option>
+            <option value="3">3–5</option>
+            <option value="5">More than 5</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="button-row">
+      <button onclick="calculateRisk()">Calculate My Team's Hidden Risk →</button>
+    </div>
+
+    <div class="results hidden" id="results">
+      <div class="results-label">Results</div>
+      <h2>Your Team's Estimated Hidden Burnout Cost:</h2>
+      <p class="big-number" id="totalCost">€0</p>
+      <div class="subnote">per year — conservative estimate based on ETUI, ISACA, and Gallup benchmarks</div>
+
+      <div class="result-grid">
+        <div class="result-box">
+          <div class="value green" id="productivityLoss">€0</div>
+          <h4 class="green">Productivity Loss</h4>
+          <p>Estimated annual output erosion from disengagement and presenteeism</p>
+        </div>
+
+        <div class="result-box">
+          <div class="value pink" id="turnoverCost">€0</div>
+          <h4 class="pink">Turnover Risk Cost</h4>
+          <p>Projected replacement cost at 150–200% of annual salary per departure</p>
+        </div>
+
+        <div class="result-box">
+          <div class="value purple" id="techDebtRisk">LOW</div>
+          <h4 class="purple">Tech Debt Risk</h4>
+          <p>Estimated technical debt accumulation from degraded code quality</p>
+        </div>
+      </div>
+
+      <div class="warning">
+        This is a conservative floor. The real cost — including presenteeism and hidden disengagement — is likely 3 to 5 times higher than what standard reporting captures.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function euro(value) {
+      return new Intl.NumberFormat('de-DE', {
+        style: 'currency',
+        currency: 'EUR',
+        maximumFractionDigits: 0
+      }).format(value);
+    }
+
+    function calculateRisk() {
+      const teamSize = Number(document.getElementById('teamSize').value);
+      const salary = Number(document.getElementById('salary').value);
+      const signals = Number(document.getElementById('signals').value);
+      const turnover = Number(document.getElementById('turnover').value);
+
+      if (
+        document.getElementById('teamSize').value === "" ||
+        document.getElementById('salary').value === "" ||
+        document.getElementById('signals').value === "" ||
+        document.getElementById('turnover').value === ""
+      ) {
+        alert("Please choose all 4 entries first.");
+        return;
+      }
+
+      const productivityLoss = teamSize * salary * signals;
+      const turnoverCost = turnover * salary * 1.75;
+      const totalCost = productivityLoss + turnoverCost;
+
+      let techDebtRisk = "LOW";
+      if (signals >= 0.10 || turnover >= 1) techDebtRisk = "MEDIUM";
+      if (signals >= 0.18 || turnover >= 3) techDebtRisk = "HIGH";
+
+      document.getElementById('productivityLoss').textContent = euro(productivityLoss);
+      document.getElementById('turnoverCost').textContent = euro(turnoverCost);
+      document.getElementById('totalCost').textContent = euro(totalCost);
+      document.getElementById('techDebtRisk').textContent = techDebtRisk;
+
+      document.getElementById('results').classList.remove('hidden');
+      document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>
